@@ -60,7 +60,6 @@ class ShopCard extends StatelessWidget {
                     ));
                   }
                 }
-
         },
         child: Container(
           // Container untuk menyimpan Icon dan Text
