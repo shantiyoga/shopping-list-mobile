@@ -18,60 +18,62 @@ class _ShopFormPageState extends State<ShopFormPage> {
     String _name = "";
     int _price = 0;
     String _description = "";
+
     @override
     Widget build(BuildContext context) {
-        final request = context.watch<CookieRequest>();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: Text(
-            'Form Tambah Produk',
+      final request = context.watch<CookieRequest>();
+        return Scaffold(
+          appBar: AppBar(
+            title: const Center(
+              child: Text(
+                'Form Tambah Produk',
+              ),
+            ),
+            backgroundColor: Colors.indigo,
+            foregroundColor: Colors.white,
           ),
-        ),
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
-      ),
-      drawer: const LeftDrawer(),
-      body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: "Nama Produk",
-                          labelText: "Nama Produk",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                        ),
-                        onChanged: (String? value) {
-                          setState(() {
-                            _name = value!;
-                          });
-                        },
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return "Nama tidak boleh kosong!";
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
+          // Drawer
+          drawer: const LeftDrawer(),
+          body: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
                       decoration: InputDecoration(
-                        hintText: "Harga",
-                        labelText: "Harga",
+                        hintText: "Nama Produk",
+                        labelText: "Nama Produk",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
-
+                      onChanged: (String? value) {
+                        setState(() {
+                          _name = value!;
+                        });
+                      },
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return "Nama tidak boleh kosong!";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              hintText: "Harga",
+                              labelText: "Harga",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                        ),
+                      
                       onChanged: (String? value) {
                         setState(() {
                           _price = int.parse(value!);
@@ -98,9 +100,9 @@ class _ShopFormPageState extends State<ShopFormPage> {
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
+                      // Variabel _description
                       onChanged: (String? value) {
                         setState(() {
-
                           _description = value!;
                         });
                       },
@@ -112,55 +114,57 @@ class _ShopFormPageState extends State<ShopFormPage> {
                       },
                     ),
                   ),
-                  Align(
+            
+            Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.indigo),
-                              ),
-
-                            onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                    final response = await request.postJson(
-                                    "http://127.0.0.1:8000/create-flutter/",
-                                    jsonEncode(<String, String>{
-                                        'name': _name,
-                                        'price': _price.toString(),
-                                        'description': _description,
-                                    }));
-                                    if (response['status'] == 'success') {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                        content: Text("Produk baru berhasil disimpan!"),
-                                        ));
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => MyHomePage()),
-                                        );
-                                    } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                            content:
-                                                Text("Terdapat kesalahan, silakan coba lagi."),
-                                        ));
-                                    }
-                                }
-                            },
-                              child: const Text(
-                                "Save",
-                                style: TextStyle(color: Colors.white),
-                              ),
+                      child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.indigo),
                             ),
+                  onPressed: () async {
+    if (_formKey.currentState!.validate()) {
+        // Kirim ke Django dan tunggu respons
+        // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
+        final response = await request.postJson(
+        "http://127.0.0.1:8000/create-flutter/",
+        jsonEncode(<String, String>{
+            'name': _name,
+            'price': _price.toString(),
+            'description': _description,
+            // TODO: Sesuaikan field data sesuai dengan aplikasimu
+        }));
+        if (response['status'] == 'success') {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(
+            content: Text("Produk baru berhasil disimpan!"),
+            ));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => MyHomePage()),
+            );
+        } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(
+                content:
+                    Text("Terdapat kesalahan, silakan coba lagi."),
+            ));
+        }
+    }
+},
+                    child: const Text(
+                      "Save",
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  ]
+                ),
+              ),],
+        
+          )
+        ),
       ),
-    )
-    )
     );
-    }
+  }
 }
-
